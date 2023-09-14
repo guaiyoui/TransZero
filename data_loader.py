@@ -10,7 +10,7 @@ import random
 
 
 def get_dataset(dataset, pe_dim):
-    if dataset in {"pubmed", "corafull", "computer", "photo", "cs", "physics","cora", "citeseer"}:
+    if dataset in {"pubmed", "corafull", "computer", "photo", "cs", "cora", "physics","citeseer"}:
 
         file_path = "dataset/"+dataset+".pt"
 
@@ -22,9 +22,9 @@ def get_dataset(dataset, pe_dim):
         features = data_list[1]
         labels = data_list[2]
 
-        idx_train = data_list[3]
-        idx_val = data_list[4]
-        idx_test = data_list[5]
+        # idx_train = data_list[3]
+        # idx_val = data_list[4]
+        # idx_test = data_list[5]
 
         if dataset == "pubmed":
             graph = PubmedGraphDataset()[0]
@@ -49,7 +49,6 @@ def get_dataset(dataset, pe_dim):
         lpe = utils.laplacian_positional_encoding(graph, pe_dim) 
      
         features = torch.cat((features, lpe), dim=1)
-
 
 
     elif dataset in {"aminer", "reddit", "Amazon2M"}:
@@ -81,9 +80,26 @@ def get_dataset(dataset, pe_dim):
 
         labels = torch.argmax(labels, -1)
     
-    print(type(adj), type(features), type(labels), type(idx_train), type(idx_val), type(idx_test))
-    print(adj.shape, features.shape, labels.shape, len(idx_train), len(idx_val), len(idx_test))
-    return adj, features, labels, idx_train, idx_val, idx_test
+    elif dataset in {"texas"}:
+        file_path = "dataset/"+dataset+".pt"
+
+        data_list = torch.load(file_path)
+        # print(data_list)
+        # data_list = [adj, features, labels, idx_train, idx_val, idx_test]
+        adj = data_list[0]
+        # print(adj.shape)
+        features = data_list[1]
+        labels = data_list[2]
+
+        idx_train = torch.zeros(10)
+        idx_val = torch.zeros(10)
+        idx_test = torch.zeros(10)
+    
+    # print(type(adj), type(features), type(labels), type(idx_train), type(idx_val), type(idx_test))
+    # print(adj.shape, features.shape, labels.shape, len(idx_train), len(idx_val), len(idx_test))
+    # return adj, features, labels, idx_train, idx_val, idx_test
+
+    return adj.cpu().type(torch.LongTensor), features.type(torch.LongTensor), labels
 
 
 

@@ -2,7 +2,8 @@ import torch
 import math
 import torch.nn as nn
 from layer import TransformerBlock
-from torch_geometric.nn import global_add_pool, global_mean_pool, global_max_pool, GlobalAttention, Set2Set
+from torch_geometric.nn import global_add_pool, global_mean_pool, global_max_pool, GCNConv
+from utils import is_edge_in_edge_index
 
 class PretrainModel(nn.Module):
     def __init__(self, input_dim, config):
@@ -57,7 +58,6 @@ class PretrainModel(nn.Module):
 
     def contrastive_link_loss(self, node_tensor, neighbor_tensor, adj_, minus_adj):
         
-        # print(node_tensor.shape, neighbor_tensor.shape)
 
         shuf_index = torch.randperm(node_tensor.shape[0])
 
@@ -79,7 +79,43 @@ class PretrainModel(nn.Module):
         # link_loss = torch.abs(torch.sum(link_loss))
         link_loss = torch.sum(link_loss)
 
-        TotalLoss += 0.01*link_loss
+        TotalLoss += 0.001*link_loss
+
+        return TotalLoss
+
+
+class GCN_Pretrain(nn.Module):
+    def __init__(self, input_dim, config):
+        super().__init__()
+        self.input_dim = input_dim
+        self.config = config
+
+        self.conv1 = GCNConv(input_dim, config.hidden_dim*2)
+        self.conv2 = GCNConv(config.hidden_dim*2, config.hidden_dim)
+        self.conv3 = GCNConv(config.hidden_dim, config.hidden_dim)
+    
+    def forward(self, feature, edge_index):
+        
+        feature = self.conv1(feature, edge_index)
+        feature = torch.nn.functional.relu(feature)  # 激活函数
+        feature = torch.nn.functional.dropout(feature, training=self.training)  # dropout层，防止过拟合
+        feature = self.conv2(feature, edge_index)  # 第二层卷积层
+        feature = torch.nn.functional.relu(feature)  # 激活函数
+        feature = torch.nn.functional.dropout(feature, training=self.training)  # dropout层，防止过拟合
+        feature = self.conv3(feature, edge_index)  # 第二层卷积层
+
+        return feature
+
+    def contrastive_link_loss(self, node_tensor, adj_, minus_adj):
+        
+        TotalLoss = 0.0
+
+        pairwise_similary = torch.mm(node_tensor, node_tensor.t())
+        link_loss = minus_adj.multiply(pairwise_similary)-adj_.multiply(pairwise_similary)
+        # link_loss = torch.abs(torch.sum(link_loss))
+        link_loss = torch.sum(link_loss)
+
+        TotalLoss += 0.001*link_loss
         # print(link_loss)
 
         return TotalLoss

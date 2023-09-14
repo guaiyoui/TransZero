@@ -25,8 +25,10 @@ if __name__ == "__main__":
     if torch.cuda.is_available():
         torch.cuda.manual_seed(args.seed)
     
-    adj, features, labels, idx_train, idx_val, idx_test = get_dataset(args.dataset, args.pe_dim)
-
+    # adj, features, labels, idx_train, idx_val, idx_test = get_dataset(args.dataset, args.pe_dim)
+    adj, features, labels = get_dataset(args.dataset, args.pe_dim)
+    print(adj, features, labels)
+    print(adj.device, features.device, labels.device)
     processed_features = utils.re_features(adj, features, args.hops)  # return (N, hops+1, d)
     
     data_loader = Data.DataLoader(processed_features, batch_size=args.batch_size, shuffle = False)
@@ -104,8 +106,10 @@ if __name__ == "__main__":
         node_tensor, neighbor_tensor = model(nodes_features)
         if len(node_embedding) == 0:
             node_embedding = np.concatenate((node_tensor.cpu().detach().numpy(), neighbor_tensor.cpu().detach().numpy()), axis=1)
+            # node_embedding = node_tensor.cpu().detach().numpy()
         else:
             new_node_embedding = np.concatenate((node_tensor.cpu().detach().numpy(), neighbor_tensor.cpu().detach().numpy()), axis=1)
+            # new_node_embedding = node_tensor.cpu().detach().numpy()
             node_embedding = np.concatenate((node_embedding, new_node_embedding), axis=0)
     
     np.save(args.embedding_path + args.model_name + '.npy', node_embedding)

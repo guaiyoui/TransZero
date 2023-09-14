@@ -8,6 +8,8 @@ import dgl
 from sklearn.metrics import f1_score
 import scipy.sparse as sp
 import numpy as np
+import networkx as nx
+from numpy import *
 
 # Training settings
 def parse_args():
@@ -47,6 +49,8 @@ def parse_args():
 
     # training parameters
     parser.add_argument('--batch_size', type=int, default=1000,
+                        help='Batch size')
+    parser.add_argument('--group_epoch_gap', type=int, default=20,
                         help='Batch size')
     parser.add_argument('--epochs', type=int, default=2000,
                         help='Number of epochs to train.')
@@ -123,6 +127,20 @@ def re_features(adj, features, K):
 
 def f1_score_calculation(y_pred, y_true):
     return f1_score(y_pred, y_true, average="macro")
+    # return f1_score(y_pred, y_true, average="binary")
+    # return f1_score(y_pred, y_true)
+
+# def f1_score_calculation(y_pred, y_true):
+#     if len(y_pred.shape) == 1:
+#         y_pred = y_pred.reshape(1, -1)
+#         y_true = y_true.reshape(1, -1)
+#     F1 = []
+#     for i in range(y_pred.shape[0]):
+#         pre = torch.sum(torch.multiply(y_pred[i], y_true[i]))/(torch.sum(y_pred[i])+1E-9)
+#         rec = torch.sum(torch.multiply(y_pred[i], y_true[i]))/(torch.sum(y_true[i])+1E-9)
+#         F1.append(2 * pre * rec / (pre + rec+1E-9))
+
+#     return mean(F1)
 
 def load_query_n_gt(path, dataset, vec_length):
     # load query and ground truth
@@ -198,3 +216,89 @@ def transform_sp_csr_to_coo(adj, batch_size, node_num):
     return adj_tensor_coo, minus_adj_tensor_coo
 
 
+# transform coo to edge index in pytorch geometric 
+def transform_coo_to_edge_index(adj):
+    adj = adj.coalesce()
+    edge_index = adj.indices().detach().long()
+    return edge_index
+
+# determine one edge in edge_index or not of torch geometric
+def is_edge_in_edge_index(edge_index, source, target):
+    mask = (edge_index[0] == source) & (edge_index[1] == target)
+    return mask.any()
+
+def construct_pseudo_assignment(cluster_ids_x):
+    pseudo_assignment = torch.zeros(cluster_ids_x.shape[0], int(cluster_ids_x.max()+1))
+
+    for i in range(cluster_ids_x.shape[0]):
+        pseudo_assignment[i][int(cluster_ids_x[i])] = 1
+    
+    return pseudo_assignment
+
+def pq_computation(similarity):
+    q = torch.nn.functional.normalize(similarity, dim=1, p=1)
+    p_temp = torch.mul(q, q)
+    q_colsum = torch.sum(q, axis=0)
+    p_temp = torch.div(p_temp,q_colsum)
+    p = torch.nn.functional.normalize(p_temp, dim=1, p=1)
+    return q, p
+
+def coo_matrix_to_nx_graph(matrix):
+    # Create an empty NetworkX graph
+    graph = nx.Graph()
+
+    # Get the number of nodes in the COO matrix
+    num_nodes = matrix.shape[0]
+
+    # Convert the COO matrix to a dense matrix
+    dense_matrix = matrix.to_dense()
+    # graph.add_edge(0, 105)
+    # graph.add_edge(0, 120)
+    # graph.add_edge(0, 176)
+    # print(dense_matrix[120][120:125])
+    # Iterate over the non-zero entries in the dense matrix
+    for i in range(num_nodes):
+        for j in range(num_nodes):
+            if dense_matrix[i][j] != 0:
+                # Add an edge to the NetworkX graph
+                graph.add_edge(i, j)
+                graph.add_edge(j, i)
+
+    return graph
+
+def coo_matrix_to_nx_graph_efficient(adj_matrix):
+    # 创建一个无向图对象
+    graph = nx.Graph()
+
+    # 获取 COO 矩阵的行和列索引以及权重值
+    adj_matrix = adj_matrix.coalesce()
+    rows = adj_matrix.indices()[0]
+    cols = adj_matrix.indices()[1]
+    # print(rows, cols)
+    # 添加节点和边到图中
+    for i in range(len(rows)):
+        graph.add_edge(int(rows[i]), int(cols[i]))
+        graph.add_edge(int(cols[i]), int(rows[i]))
+
+    return graph
+
+def obtain_adj_from_nx(graph):
+    return np.array(nx.adjacency_matrix(graph, nodelist=[i for i in range(max(graph.nodes)+1)]).todense())
+
+def find_all_neighbors_bynx(query, Graph):
+    neighbors = []
+    for i in range(len(query)):
+        for j in Graph.neighbors(query[i]):
+            if j not in query:
+                neighbors.append(j)
+    return neighbors
+
+def MaxMinNormalization(x, Min, Max):
+    
+    x = np.array(x)
+    x_max = np.max(x)
+    x_min = np.min(x)
+
+    x = [(item-x_min)*(Max-Min)/(x_max - x_min) + Min for item in x]
+
+    return x
