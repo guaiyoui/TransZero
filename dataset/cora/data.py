@@ -40,6 +40,20 @@ for i in range(len(selected_queries)):
         gt_file.write(" ")
     gt_file.write("\n")
 
+adj = data_list[0]
+# print(adj)
+coalesced_tensor = adj.coalesce()
+index = coalesced_tensor.indices()
+# print(index)
+
+edge_file = open("cora.edges", "w")
+for i in range(index.shape[1]):
+    edge_file.write(str(index[0][i].item()))
+    edge_file.write(" ")
+    edge_file.write(str(index[1][i].item()))
+    edge_file.write("\n")
+
+
 
 
 
