@@ -29,8 +29,11 @@ if __name__ == "__main__":
     adj, features, labels = get_dataset(args.dataset, args.pe_dim)
     print(adj, features, labels)
     print(adj.device, features.device, labels.device)
+
+    start = time.time()
     processed_features = utils.re_features(adj, features, args.hops)  # return (N, hops+1, d)
-    
+    print("feature process time: {:.4f}s".format(time.time() - start))
+
     data_loader = Data.DataLoader(processed_features, batch_size=args.batch_size, shuffle = False)
 
     # model configuration
@@ -51,9 +54,14 @@ if __name__ == "__main__":
     stopping_args = Stop_args(patience=args.patience, max_epochs=args.epochs)
     early_stopping = EarlyStopping(model, **stopping_args)
 
+    start = time.time()
+    print("starting transformer to coo")
     adj = transform_coo_to_csr(adj) # transform to csr to support slicing operation
+    print("start mini batch processing")
     adj_batch, minus_adj_batch = transform_sp_csr_to_coo(adj, args.batch_size, features.shape[0]) # transform to coo to support tensor operation
-
+    
+    print("adj process time: {:.4f}s".format(time.time() - start))
+    print("starting training...")
     # model train
     model.train()
 
@@ -71,11 +79,13 @@ if __name__ == "__main__":
             optimizer.zero_grad()
             node_tensor, neighbor_tensor = model(nodes_features)
 
+            # print(node_tensor.shape, neighbor_tensor.shape, adj_.shape, minus_adj.shape)
             loss_train = model.contrastive_link_loss(node_tensor, neighbor_tensor, adj_, minus_adj)
             loss_train.backward()
             optimizer.step()
             lr_scheduler.step()
             loss_train_b.append(loss_train.item())
+            # break
 
         if early_stopping.simple_check(loss_train_b):
             break

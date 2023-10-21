@@ -1,0 +1,163 @@
+nohup: ignoring input
+/data/jianweiw/code/SSLCS/PU_CS/data_loader.py:66: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  features = torch.tensor(data_list[1], dtype=torch.float32)
+/data/jianweiw/code/SSLCS/PU_CS/data_loader.py:67: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  labels = torch.tensor(data_list[2])
+/data/jianweiw/code/SSLCS/PU_CS/utils.py:98: UserWarning: Casting complex values to real discards the imaginary part (Triggered internally at /opt/conda/conda-bld/pytorch_1666642975312/work/aten/src/ATen/native/Copy.cpp:250.)
+  lap_pos_enc = torch.from_numpy(EigVec[:,1:pos_enc_dim+1]).float()
+tensor(indices=tensor([[138846, 174217, 234970,  ...,  76064, 177196, 402818],
+                       [     0,      0,      0,  ..., 593485, 593485, 593485]]),
+       values=tensor([1, 1, 1,  ..., 1, 1, 1]),
+       size=(593486, 593486), nnz=6217004, layout=torch.sparse_coo) tensor([[0, 0, 0,  ..., 0, 0, 0],
+        [0, 0, 0,  ..., 0, 0, 0],
+        [0, 0, 0,  ..., 0, 0, 0],
+        ...,
+        [0, 0, 0,  ..., 0, 0, 0],
+        [0, 0, 0,  ..., 0, 0, 0],
+        [0, 0, 0,  ..., 0, 0, 0]]) tensor(13)
+cpu cpu cpu
+feature process time: 75.6561s
+PretrainModel(
+  (Linear1): Linear(in_features=110, out_features=512, bias=True)
+  (encoder): TransformerBlock(
+    (att_embeddings_nope): Linear(in_features=110, out_features=512, bias=True)
+    (layers): ModuleList(
+      (0): EncoderLayer(
+        (self_attention_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (self_attention): MultiHeadAttention(
+          (linear_q): Linear(in_features=512, out_features=512, bias=True)
+          (linear_k): Linear(in_features=512, out_features=512, bias=True)
+          (linear_v): Linear(in_features=512, out_features=512, bias=True)
+          (att_dropout): Dropout(p=0.1, inplace=False)
+          (output_layer): Linear(in_features=512, out_features=512, bias=True)
+        )
+        (self_attention_dropout): Dropout(p=0.1, inplace=False)
+        (ffn_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (layer1): Linear(in_features=512, out_features=1024, bias=True)
+          (gelu): GELU(approximate='none')
+          (layer2): Linear(in_features=1024, out_features=512, bias=True)
+        )
+        (ffn_dropout): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (final_ln): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+    (out_proj): Linear(in_features=512, out_features=256, bias=True)
+    (attn_layer): Linear(in_features=1024, out_features=1, bias=True)
+  )
+  (marginloss): MarginRankingLoss()
+)
+link_pretrain.py:43: DeprecationWarning: Calling np.sum(generator) is deprecated, and in the future will give a different result. Use np.sum(np.fromiter(generator)) or the python sum builtin instead.
+  print('total params:', sum(p.numel() for p in model.parameters()))
+total params: 2349826
+starting transformer to coo
+start mini batch processing
+start mini batch: adj of each chunks
+start mini batch: minus adj of each chunks
+start mini batch: back to torch coo adj
+start mini batch: back to torch coo minus adj
+adj process time: 145.5792s
+starting training...
+Epoch: 0001 loss_train: 2913.7134
+Epoch: 0002 loss_train: 1371.2042
+Epoch: 0003 loss_train: 671.1909
+Epoch: 0004 loss_train: 956.7975
+Epoch: 0005 loss_train: 949.7910
+Epoch: 0006 loss_train: 754.1699
+Epoch: 0007 loss_train: 738.4258
+Epoch: 0008 loss_train: 625.3922
+Epoch: 0009 loss_train: 599.5327
+Epoch: 0010 loss_train: 569.8998
+Epoch: 0011 loss_train: 610.1663
+Epoch: 0012 loss_train: 733.8655
+Epoch: 0013 loss_train: 718.3715
+Epoch: 0014 loss_train: 711.6214
+Epoch: 0015 loss_train: 676.3334
+Epoch: 0016 loss_train: 551.6411
+Epoch: 0017 loss_train: 433.9565
+Epoch: 0018 loss_train: 432.8372
+Epoch: 0019 loss_train: 463.4193
+Epoch: 0020 loss_train: 300.3802
+Epoch: 0021 loss_train: 306.2360
+Epoch: 0022 loss_train: 219.0105
+Epoch: 0023 loss_train: 212.5090
+Epoch: 0024 loss_train: 202.6321
+Epoch: 0025 loss_train: 161.4429
+Epoch: 0026 loss_train: 124.8989
+Epoch: 0027 loss_train: 92.1904
+Epoch: 0028 loss_train: 77.5046
+Epoch: 0029 loss_train: 57.5170
+Epoch: 0030 loss_train: 60.4301
+Epoch: 0031 loss_train: 39.7617
+Epoch: 0032 loss_train: 35.5810
+Epoch: 0033 loss_train: 33.5900
+Epoch: 0034 loss_train: 26.5326
+Epoch: 0035 loss_train: 21.1575
+Epoch: 0036 loss_train: 15.1433
+Epoch: 0037 loss_train: 14.7128
+Epoch: 0038 loss_train: 16.5522
+Epoch: 0039 loss_train: 13.2267
+Epoch: 0040 loss_train: 8.0186
+Epoch: 0041 loss_train: 6.3850
+Epoch: 0042 loss_train: 5.4482
+Epoch: 0043 loss_train: 4.5570
+Epoch: 0044 loss_train: 7.2735
+Epoch: 0045 loss_train: 5.1149
+Epoch: 0046 loss_train: 3.0922
+Epoch: 0047 loss_train: 3.4745
+Epoch: 0048 loss_train: 3.4907
+Epoch: 0049 loss_train: 3.2959
+Epoch: 0050 loss_train: 2.6336
+Epoch: 0051 loss_train: 2.1715
+Epoch: 0052 loss_train: 1.6320
+Epoch: 0053 loss_train: 1.4305
+Epoch: 0054 loss_train: 1.6777
+Epoch: 0055 loss_train: 1.4625
+Epoch: 0056 loss_train: 1.4374
+Epoch: 0057 loss_train: 1.6960
+Epoch: 0058 loss_train: 1.8411
+Epoch: 0059 loss_train: 2.2781
+Epoch: 0060 loss_train: 1.7361
+Epoch: 0061 loss_train: 1.9063
+Epoch: 0062 loss_train: 1.5196
+Epoch: 0063 loss_train: 1.4818
+Epoch: 0064 loss_train: 1.4191
+Epoch: 0065 loss_train: 1.4134
+Epoch: 0066 loss_train: 1.6863
+Epoch: 0067 loss_train: 1.4986
+Epoch: 0068 loss_train: 1.5504
+Epoch: 0069 loss_train: 1.3240
+Epoch: 0070 loss_train: 1.1184
+Epoch: 0071 loss_train: 1.9453
+Epoch: 0072 loss_train: 1.4181
+Epoch: 0073 loss_train: 1.6103
+Epoch: 0074 loss_train: 1.2607
+Epoch: 0075 loss_train: 1.2828
+Epoch: 0076 loss_train: 1.5537
+Epoch: 0077 loss_train: 1.3919
+Epoch: 0078 loss_train: 1.4167
+Epoch: 0079 loss_train: 1.2438
+Epoch: 0080 loss_train: 1.1584
+Epoch: 0081 loss_train: 1.8166
+Epoch: 0082 loss_train: 1.1600
+Epoch: 0083 loss_train: 1.2628
+Epoch: 0084 loss_train: 1.0692
+Epoch: 0085 loss_train: 1.6440
+Epoch: 0086 loss_train: 1.1523
+Epoch: 0087 loss_train: 1.1130
+Epoch: 0088 loss_train: 1.2106
+Epoch: 0089 loss_train: 1.1591
+Epoch: 0090 loss_train: 1.2478
+Epoch: 0091 loss_train: 1.0443
+Epoch: 0092 loss_train: 1.1113
+Epoch: 0093 loss_train: 1.2511
+Epoch: 0094 loss_train: 1.3493
+Epoch: 0095 loss_train: 0.9628
+Epoch: 0096 loss_train: 1.2273
+Epoch: 0097 loss_train: 1.2188
+Epoch: 0098 loss_train: 1.0055
+Epoch: 0099 loss_train: 1.0671
+Epoch: 0100 loss_train: 1.0238
+Optimization Finished!
+Train time: 1516.0522s
+Start Save Model...

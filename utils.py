@@ -125,10 +125,10 @@ def re_features(adj, features, K):
 
     return nodes_features
 
-def f1_score_calculation(y_pred, y_true):
-    return f1_score(y_pred, y_true, average="macro")
-    # return f1_score(y_pred, y_true, average="binary")
-    # return f1_score(y_pred, y_true)
+# def f1_score_calculation(y_pred, y_true):
+#     return f1_score(y_pred, y_true, average="macro")
+#     return f1_score(y_pred, y_true, average="binary")
+#     return f1_score(y_pred, y_true)
 
 # def f1_score_calculation(y_pred, y_true):
 #     if len(y_pred.shape) == 1:
@@ -141,6 +141,15 @@ def f1_score_calculation(y_pred, y_true):
 #         F1.append(2 * pre * rec / (pre + rec+1E-9))
 
 #     return mean(F1)
+
+def f1_score_calculation(y_pred, y_true):
+    y_pred = y_pred.reshape(1, -1)
+    y_true = y_true.reshape(1, -1)
+    pre = torch.sum(torch.multiply(y_pred, y_true))/(torch.sum(y_pred)+1E-9)
+    rec = torch.sum(torch.multiply(y_pred, y_true))/(torch.sum(y_true)+1E-9)
+    F1 = 2 * pre * rec / (pre + rec+1E-9)
+
+    return F1
 
 def load_query_n_gt(path, dataset, vec_length):
     # load query and ground truth
@@ -195,10 +204,11 @@ def transform_coo_to_csr(adj):
     adj=sp.csr_matrix((data, (row, col)), shape=shape)
     return adj
 
-def transform_csr_to_coo(adj):
+def transform_csr_to_coo(adj, size=None):
     adj = adj.tocoo()
     adj = torch.sparse.LongTensor(torch.LongTensor([adj.row.tolist(), adj.col.tolist()]),
-                              torch.LongTensor(adj.data.astype(np.int32)))
+                              torch.LongTensor(adj.data.astype(np.int32)),
+                              torch.Size([size, size]))
     return adj
 
 def transform_sp_csr_to_coo(adj, batch_size, node_num):
@@ -207,11 +217,17 @@ def transform_sp_csr_to_coo(adj, batch_size, node_num):
     divide_index = [node_index[i:i+batch_size] for i in range(0, len(node_index), batch_size)]
 
     # adj of each chunks, in the format of sp_csr
+    print("start mini batch: adj of each chunks")
     adj_sp_csr = [adj[divide_index[i]][:, divide_index[i]] for i in range(len(divide_index))]
+    print("start mini batch: minus adj of each chunks")
     minus_adj_sp_csr = [sp.csr_matrix(torch.ones(item.shape))-item for item in adj_sp_csr]
 
-    adj_tensor_coo = [transform_csr_to_coo(item).to_dense() for item in adj_sp_csr]
-    minus_adj_tensor_coo = [transform_csr_to_coo(item).to_dense() for item in minus_adj_sp_csr]
+    # adj_tensor_coo = [transform_csr_to_coo(item).to_dense() for item in adj_sp_csr]
+    # minus_adj_tensor_coo = [transform_csr_to_coo(item).to_dense() for item in minus_adj_sp_csr]
+    print("start mini batch: back to torch coo adj")
+    adj_tensor_coo = [transform_csr_to_coo(adj_sp_csr[i], len(divide_index[i])).to_dense() for i in range(len(divide_index))]
+    print("start mini batch: back to torch coo minus adj")
+    minus_adj_tensor_coo = [transform_csr_to_coo(minus_adj_sp_csr[i], len(divide_index[i])).to_dense() for i in range(len(divide_index))]
 
     return adj_tensor_coo, minus_adj_tensor_coo
 
@@ -221,6 +237,15 @@ def transform_coo_to_edge_index(adj):
     adj = adj.coalesce()
     edge_index = adj.indices().detach().long()
     return edge_index
+
+def sparse_mx_to_torch_sparse_tensor(sparse_mx):
+    """Convert a scipy sparse matrix to a torch sparse tensor."""
+    sparse_mx = sparse_mx.tocoo().astype(np.float32)
+    indices = torch.from_numpy(
+        np.vstack((sparse_mx.row, sparse_mx.col)).astype(np.int64))
+    values = torch.from_numpy(sparse_mx.data)
+    shape = torch.Size(sparse_mx.shape)
+    return torch.sparse.FloatTensor(indices, values, shape)
 
 # determine one edge in edge_index or not of torch geometric
 def is_edge_in_edge_index(edge_index, source, target):

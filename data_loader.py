@@ -65,9 +65,9 @@ def get_dataset(dataset, pe_dim):
         #print(type(adj))
         features = torch.tensor(data_list[1], dtype=torch.float32)
         labels = torch.tensor(data_list[2])
-        idx_train = torch.tensor(data_list[3])
-        idx_val = torch.tensor(data_list[4])
-        idx_test = torch.tensor(data_list[5])
+        # idx_train = torch.tensor(data_list[3])
+        # idx_val = torch.tensor(data_list[4])
+        # idx_test = torch.tensor(data_list[5])
 
         graph = dgl.from_scipy(adj)
 
@@ -91,9 +91,9 @@ def get_dataset(dataset, pe_dim):
         features = data_list[1]
         labels = data_list[2]
 
-        idx_train = torch.zeros(10)
-        idx_val = torch.zeros(10)
-        idx_test = torch.zeros(10)
+        # idx_train = torch.zeros(10)
+        # idx_val = torch.zeros(10)
+        # idx_test = torch.zeros(10)
     
     # print(type(adj), type(features), type(labels), type(idx_train), type(idx_val), type(idx_test))
     # print(adj.shape, features.shape, labels.shape, len(idx_train), len(idx_val), len(idx_test))

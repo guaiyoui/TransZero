@@ -1,0 +1,75 @@
+nohup: ignoring input
+/data/jianweiw/code/SSLCS/PU_CS/data_loader.py:66: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  features = torch.tensor(data_list[1], dtype=torch.float32)
+/data/jianweiw/code/SSLCS/PU_CS/data_loader.py:67: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  labels = torch.tensor(data_list[2])
+/data/jianweiw/code/SSLCS/PU_CS/utils.py:98: UserWarning: Casting complex values to real discards the imaginary part (Triggered internally at /opt/conda/conda-bld/pytorch_1666642975312/work/aten/src/ATen/native/Copy.cpp:250.)
+  lap_pos_enc = torch.from_numpy(EigVec[:,1:pos_enc_dim+1]).float()
+tensor(indices=tensor([[   249,    969,   1408,  ..., 227156, 231579, 232594],
+                       [     0,      0,      0,  ..., 232964, 232964, 232964]]),
+       values=tensor([1, 1, 1,  ..., 1, 1, 1]),
+       size=(232965, 232965), nnz=23213838, layout=torch.sparse_coo) tensor([[1, 9, 0,  ..., 0, 0, 0],
+        [0, 0, 0,  ..., 0, 0, 0],
+        [0, 0, 0,  ..., 0, 0, 0],
+        ...,
+        [0, 0, 0,  ..., 0, 0, 0],
+        [0, 0, 0,  ..., 0, 0, 0],
+        [0, 0, 0,  ..., 0, 0, 0]]) tensor(46)
+cpu cpu cpu
+feature process time: 262.0099s
+PretrainModel(
+  (Linear1): Linear(in_features=612, out_features=512, bias=True)
+  (encoder): TransformerBlock(
+    (att_embeddings_nope): Linear(in_features=612, out_features=512, bias=True)
+    (layers): ModuleList(
+      (0): EncoderLayer(
+        (self_attention_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (self_attention): MultiHeadAttention(
+          (linear_q): Linear(in_features=512, out_features=512, bias=True)
+          (linear_k): Linear(in_features=512, out_features=512, bias=True)
+          (linear_v): Linear(in_features=512, out_features=512, bias=True)
+          (att_dropout): Dropout(p=0.1, inplace=False)
+          (output_layer): Linear(in_features=512, out_features=512, bias=True)
+        )
+        (self_attention_dropout): Dropout(p=0.1, inplace=False)
+        (ffn_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (layer1): Linear(in_features=512, out_features=1024, bias=True)
+          (gelu): GELU(approximate='none')
+          (layer2): Linear(in_features=1024, out_features=512, bias=True)
+        )
+        (ffn_dropout): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (final_ln): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+    (out_proj): Linear(in_features=512, out_features=256, bias=True)
+    (attn_layer): Linear(in_features=1024, out_features=1, bias=True)
+  )
+  (marginloss): MarginRankingLoss()
+)
+link_pretrain.py:43: DeprecationWarning: Calling np.sum(generator) is deprecated, and in the future will give a different result. Use np.sum(np.fromiter(generator)) or the python sum builtin instead.
+  print('total params:', sum(p.numel() for p in model.parameters()))
+total params: 2863874
+starting transformer to coo
+start mini batch processing
+start mini batch: adj of each chunks
+start mini batch: minus adj of each chunks
+start mini batch: back to torch coo adj
+start mini batch: back to torch coo minus adj
+adj process time: 121.3794s
+starting training...
+Epoch: 0001 loss_train: 567.2578
+Epoch: 0002 loss_train: 657.3723
+Epoch: 0003 loss_train: 591.3093
+Epoch: 0004 loss_train: 310.5516
+Epoch: 0005 loss_train: 275.6829
+Epoch: 0006 loss_train: 878.8641
+Epoch: 0007 loss_train: 320.8483
+Epoch: 0008 loss_train: 123.9315
+Epoch: 0009 loss_train: 269.2260
+Epoch: 0010 loss_train: 441.3023
+Epoch: 0011 loss_train: 282.9617
+Epoch: 0012 loss_train: 153.5908
+Optimization Finished!
+Train time: 128.4666s
+Start Save Model...

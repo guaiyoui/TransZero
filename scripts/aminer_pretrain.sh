@@ -1,0 +1,1 @@
+nohup python3 -u link_pretrain.py --dataset aminer --model_name aminer_2k --epochs 100 --batch_size 2000 --dropout 0.1 --hidden_dim 512 --hops 10  --n_heads 8 --n_layers 1 --pe_dim 10 --peak_lr 0.001  --weight_decay=1e-05 --device 5 >> ./logs/aminer_2k.txt 2>&1 &

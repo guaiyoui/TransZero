@@ -83,20 +83,27 @@ def mwg_subgraph_nocon(query_index, graph_score):
     candidates = query_index
     selected_candidate = candidates
 
+    start = time.time()
     graph_score=np.array(graph_score)
     max2min_index = np.argsort(-graph_score)
-    avg_weight = sum(graph_score)/len(graph_score)
+    end = time.time()
+    print("sort time: {:.4f}".format(end-start))
+    # avg_weight = sum(graph_score)/len(graph_score)
     max_density = -1000
+    candidate_score = [graph_score[i] for i in candidates]
 
+    start = time.time()
     for i in range(int(0.25*len(max2min_index))):
         # if max2min_index[i] not in query_index:
             candidates = candidates+[max2min_index[i]]
-            candidate_score = [graph_score[i]for i in candidates]
+            # candidate_score = [graph_score[i] for i in candidates]
+            candidate_score = candidate_score+[graph_score[max2min_index[i]]]
             candidates_density = subgraph_density_controled(candidate_score, graph_score)
             if candidates_density > max_density:
                 max_density = candidates_density
                 selected_candidate = candidates
-
+    end = time.time()
+    print("loop time: {:.4f}".format(end-start))
     # for i in range(len(max2min_index)):
     #     if max2min_index[i] not in query_index and graph_score[max2min_index[i]]>avg_weight:
 
@@ -106,4 +113,6 @@ def mwg_subgraph_nocon(query_index, graph_score):
 
     # print(len(selected_candidate), len(graph_score))
     return selected_candidate, max_density
+
+
 
