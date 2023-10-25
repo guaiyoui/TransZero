@@ -4,7 +4,7 @@ from ktruss_my import ktruss_cs_my
 from kcore_my import kcore_cs_my
 from kecc import kecc_cs
 from kecc_my import kecc_cs_my
-from utils import f1_score_calculation, load_query_n_gt
+from utils import f1_score_calculation, load_query_n_gt, evaluation
 import argparse
 import torch
 from tqdm import tqdm
@@ -70,7 +70,16 @@ if __name__ == "__main__":
         prediction.append(component)
     
     f1score = f1_score_calculation(torch.Tensor(prediction), gt)
-    print("The F1-score for: " + args.dataset+ ". by: "+ args.method + " is: " + str(f1score))
+    print("The F1-score for ### " + args.dataset+ " ### by: "+ args.method + " is #### :" + str(f1score))
+
+    nmi, ari, jac = evaluation(torch.Tensor(prediction).int(), gt.int())
+    
+    print("The NMI-score for ### " + args.dataset+ " ### by: "+ args.method + " is #### :" + str(nmi))
+    print("The ARI-score for ### " + args.dataset+ " ### by: "+ args.method + " is #### :" + str(ari))
+    print("The JAC-score for ### " + args.dataset+ " ### by: "+ args.method + " is #### :" + str(jac))
+    # print("NMI score by maximum weight gain: {:.4f}".format(nmi))
+    # print("ARI score by maximum weight gain: {:.4f}".format(ari))
+    # print("JAC score by maximum weight gain: {:.4f}".format(jac))
 
     
     

@@ -1,5 +1,6 @@
 Based on the work in https://github.com/orezvani/GSOC-Rogas
 
+use the code in ./dataset_dealing/cora_data.py to generate the edge file. (or you can write your own code.)
 
 1: node index range. [0, max]
 

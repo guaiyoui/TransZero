@@ -1,4 +1,4 @@
-python link_pretrain.py --dataset texas --model_name texas --batch_size 187 --dropout 0.1 --hidden_dim 512 --hops 3  --n_heads 8 --n_layers 1 --pe_dim 3 --peak_lr 0.001  --weight_decay=1e-05 --epochs 100 
+python link_pretrain.py --dataset texas --model_name texas --batch_size 183 --epochs 100 --dropout 0.1 --hidden_dim 128 --hops 5  --n_heads 8 --n_layers 1 --pe_dim 5 --peak_lr 0.001  --weight_decay=1e-05 
+# python reconstruct_pretrain.py --dataset texas --model_name texas --batch_size 183 --epochs 100 --dropout 0.1 --hidden_dim 128 --hops 3  --n_heads 8 --n_layers 1 --pe_dim 10 --peak_lr 0.001  --weight_decay=1e-05 
 
-python maxtopk_accuracy.py --dataset texas
-python kmeans_accuracy.py --dataset texas --num_communities 5
+python accuracy_globalsearch.py --dataset texas

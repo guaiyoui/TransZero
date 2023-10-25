@@ -10,6 +10,7 @@ import scipy.sparse as sp
 import numpy as np
 import networkx as nx
 from numpy import *
+from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score, jaccard_score
 
 # Training settings
 def parse_args():
@@ -23,7 +24,7 @@ def parse_args():
     parser.add_argument('--name', type=str, default=None)
     parser.add_argument('--dataset', type=str, default='cora',
                         help='Choose from {pubmed}')
-    parser.add_argument('--device', type=int, default=2, 
+    parser.add_argument('--device', type=int, default=1, 
                         help='Device cuda id')
     parser.add_argument('--seed', type=int, default=0, 
                         help='Random seed.')
@@ -46,6 +47,8 @@ def parse_args():
     parser.add_argument('--attention_dropout', type=float, default=0.1,
                         help='Dropout in the attention layer')
     parser.add_argument('--readout', type=str, default="mean")
+    parser.add_argument('--alpha', type=float, default=0.1, 
+                        help='the value the balance the loss.')
 
     # training parameters
     parser.add_argument('--batch_size', type=int, default=1000,
@@ -110,8 +113,7 @@ def re_features(adj, features, K):
         nodes_features[i, 0, 0, :] = features[i]
 
     x = features + torch.zeros_like(features)
-    # print(adj, x)
-    # print(type(adj), type(x))
+    
     for i in range(K):
 
         x = torch.matmul(adj, x)
@@ -125,10 +127,28 @@ def re_features(adj, features, K):
 
     return nodes_features
 
-# def f1_score_calculation(y_pred, y_true):
-#     return f1_score(y_pred, y_true, average="macro")
-#     return f1_score(y_pred, y_true, average="binary")
-#     return f1_score(y_pred, y_true)
+def conductance_hop(adj, max_khop):
+    adj = adj.to(dtype=torch.float)
+    adj_current_hop = adj
+
+    results = torch.zeros((max_khop+1, adj.shape[0]))
+    for hop in range(max_khop+1):
+        adj_current_hop = torch.matmul(adj_current_hop, adj)
+        degree = torch.sum(adj_current_hop, dim=0)
+        adj_current_hop_sign = torch.sign(adj_current_hop)
+        degree_1 = torch.sum(adj_current_hop_sign, dim=0) 
+        results[hop] = (degree-degree_1).to_dense().reshape(1, -1)
+        hop += 1
+    results = results.T
+    max_indices = torch.argmax(results, dim=1)
+    
+    for i in range(results.shape[0]):
+        for j in range(results.shape[1]):       
+            if j>max_indices[i] and max_indices[i] != 0:
+                results[i][j] = 0
+            else:
+                results[i][j] = 1
+    return results
 
 # def f1_score_calculation(y_pred, y_true):
 #     if len(y_pred.shape) == 1:
@@ -148,8 +168,46 @@ def f1_score_calculation(y_pred, y_true):
     pre = torch.sum(torch.multiply(y_pred, y_true))/(torch.sum(y_pred)+1E-9)
     rec = torch.sum(torch.multiply(y_pred, y_true))/(torch.sum(y_true)+1E-9)
     F1 = 2 * pre * rec / (pre + rec+1E-9)
-
+    print("recall: ", rec, "pre: ", pre)
     return F1
+
+
+def evaluation(comm_find, comm):
+    
+    comm_find = comm_find.reshape(-1)
+    comm = comm.reshape(-1)
+    
+    return normalized_mutual_info_score(comm, comm_find), adjusted_rand_score(comm, comm_find), jaccard_score(comm, comm_find)
+
+# def evaluation(comm_find, comm):
+
+#     nmi_all, ari_all, jac_all = [], [], []
+
+#     for i in range(comm_find.shape[0]):
+#         nmi_all.append(NMI_score(comm_find[i], comm[i]))
+#         ari_all.append(ARI_score(comm_find[i], comm[i]))
+#         jac_all.append(JAC_score(comm_find[i], comm[i]))
+
+#     return np.mean(nmi_all), np.mean(ari_all), np.mean(jac_all) 
+
+def NMI_score(comm_find, comm):
+
+    score = normalized_mutual_info_score(comm, comm_find)
+    #print("q, nmi:", score)
+    return score
+
+def ARI_score(comm_find, comm):
+
+    score = adjusted_rand_score(comm, comm_find)
+    #print("q, ari:", score)
+
+    return score
+
+def JAC_score(comm_find, comm):
+
+    score = jaccard_score(comm, comm_find)
+    #print("q, jac:", score)
+    return score
 
 def load_query_n_gt(path, dataset, vec_length):
     # load query and ground truth
@@ -187,7 +245,9 @@ def get_gt_legnth(path, dataset):
     return torch.Tensor(gt_legnth)
 
 def cosin_similarity(query_tensor, emb_tensor):
-    similarity = torch.stack([torch.cosine_similarity(query_tensor[i], emb_tensor, dim=1) for i in range(len(query_tensor))], 0)
+    # similarity = torch.stack([torch.cosine_similarity(query_tensor[i], emb_tensor, dim=1) for i in range(len(query_tensor))], 0)
+    similarity = torch.stack([torch.cosine_similarity(query_tensor[i].reshape(1, -1), emb_tensor, dim=1) for i in range(len(query_tensor))], 0)
+    # print(similarity.shape)
     return similarity
     
 def dot_similarity(query_tensor, emb_tensor):
@@ -247,6 +307,16 @@ def sparse_mx_to_torch_sparse_tensor(sparse_mx):
     shape = torch.Size(sparse_mx.shape)
     return torch.sparse.FloatTensor(indices, values, shape)
 
+def torch_adj_to_scipy(adj):
+
+    shape = adj.shape
+    coords = adj.coalesce().indices()
+    values = adj.coalesce().values()
+
+    scipy_sparse = sp.coo_matrix((values.cpu().numpy(), (coords[0].cpu().numpy(), coords[1].cpu().numpy())), shape=shape)
+
+    return scipy_sparse
+
 # determine one edge in edge_index or not of torch geometric
 def is_edge_in_edge_index(edge_index, source, target):
     mask = (edge_index[0] == source) & (edge_index[1] == target)
@@ -277,10 +347,7 @@ def coo_matrix_to_nx_graph(matrix):
 
     # Convert the COO matrix to a dense matrix
     dense_matrix = matrix.to_dense()
-    # graph.add_edge(0, 105)
-    # graph.add_edge(0, 120)
-    # graph.add_edge(0, 176)
-    # print(dense_matrix[120][120:125])
+
     # Iterate over the non-zero entries in the dense matrix
     for i in range(num_nodes):
         for j in range(num_nodes):
@@ -299,7 +366,7 @@ def coo_matrix_to_nx_graph_efficient(adj_matrix):
     adj_matrix = adj_matrix.coalesce()
     rows = adj_matrix.indices()[0]
     cols = adj_matrix.indices()[1]
-    # print(rows, cols)
+
     # 添加节点和边到图中
     for i in range(len(rows)):
         graph.add_edge(int(rows[i]), int(cols[i]))
@@ -311,8 +378,13 @@ def obtain_adj_from_nx(graph):
     return np.array(nx.adjacency_matrix(graph, nodelist=[i for i in range(max(graph.nodes)+1)]).todense())
 
 def find_all_neighbors_bynx(query, Graph):
+    
+    nodes = Graph.nodes()
+
     neighbors = []
     for i in range(len(query)):
+        if query[i] not in nodes:
+            continue
         for j in Graph.neighbors(query[i]):
             if j not in query:
                 neighbors.append(j)
@@ -327,3 +399,4 @@ def MaxMinNormalization(x, Min, Max):
     x = [(item-x_min)*(Max-Min)/(x_max - x_min) + Min for item in x]
 
     return x
+

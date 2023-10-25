@@ -19,20 +19,33 @@ from utils import *
 if __name__ == "__main__":
 
     args = parse_args()
+    print(args)
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed(args.seed)
     
-    # adj, features, labels, idx_train, idx_val, idx_test = get_dataset(args.dataset, args.pe_dim)
-    adj, features, labels = get_dataset(args.dataset, args.pe_dim)
-    print(adj, features, labels)
-    print(adj.device, features.device, labels.device)
+    adj, features = get_dataset(args.dataset, args.pe_dim)
+    
+
+    start_feature_processing = time.time()
+    processed_features = utils.re_features(adj, features, args.hops)  # return (N, hops+1, d)
+    if processed_features.shape[0] < 10000:
+        indicator = utils.conductance_hop(adj, args.hops) # return (N, hops+1)
+        indicator = indicator.unsqueeze(2).repeat(1, 1, features.shape[1])
+        processed_features = processed_features*indicator
+    t_feature_precessing = time.time() - start_feature_processing
+    print("feature process time: {:.4f}s".format(t_feature_precessing))
 
     start = time.time()
-    processed_features = utils.re_features(adj, features, args.hops)  # return (N, hops+1, d)
-    print("feature process time: {:.4f}s".format(time.time() - start))
+    print("starting transformer to coo")
+    adj = transform_coo_to_csr(adj) # transform to csr to support slicing operation
+    print("start mini batch processing")
+    adj_batch, minus_adj_batch = transform_sp_csr_to_coo(adj, args.batch_size, features.shape[0]) # transform to coo to support tensor operation
+    print(len(adj_batch[0]), len(minus_adj_batch[0]))
+    print("adj process time: {:.4f}s".format(time.time() - start))
+    
 
     data_loader = Data.DataLoader(processed_features, batch_size=args.batch_size, shuffle = False)
 
@@ -54,13 +67,6 @@ if __name__ == "__main__":
     stopping_args = Stop_args(patience=args.patience, max_epochs=args.epochs)
     early_stopping = EarlyStopping(model, **stopping_args)
 
-    start = time.time()
-    print("starting transformer to coo")
-    adj = transform_coo_to_csr(adj) # transform to csr to support slicing operation
-    print("start mini batch processing")
-    adj_batch, minus_adj_batch = transform_sp_csr_to_coo(adj, args.batch_size, features.shape[0]) # transform to coo to support tensor operation
-    
-    print("adj process time: {:.4f}s".format(time.time() - start))
     print("starting training...")
     # model train
     model.train()
@@ -95,7 +101,7 @@ if __name__ == "__main__":
         # 'loss_train: {:.4f}'.format(np.mean(np.array(loss_train_b)))
     
     print("Optimization Finished!")
-    print("Train time: {:.4f}s".format(time.time() - t_start))
+    print("Train time: {:.4f}s".format(time.time() - t_start + t_feature_precessing))
 
     # model save
     print("Start Save Model...")

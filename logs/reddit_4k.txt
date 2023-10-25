@@ -73,3 +73,231 @@ Epoch: 0012 loss_train: 153.5908
 Optimization Finished!
 Train time: 128.4666s
 Start Save Model...
+Traceback (most recent call last):
+  File "link_pretrain.py", line 29, in <module>
+    adj, features, labels = get_dataset(args.dataset, args.pe_dim)
+  File "/home/jianwei/Community_Search/PU_CS/data_loader.py", line 63, in get_dataset
+    data_list = torch.load(file_path)
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/torch/serialization.py", line 986, in load
+    with _open_file_like(f, 'rb') as opened_file:
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/torch/serialization.py", line 435, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/torch/serialization.py", line 416, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: './dataset/reddit.pt'
+Traceback (most recent call last):
+  File "link_pretrain.py", line 29, in <module>
+    adj, features, labels = get_dataset(args.dataset, args.pe_dim)
+  File "/home/jianwei/Community_Search/PU_CS/data_loader.py", line 63, in get_dataset
+    data_list = torch.load(file_path)
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/torch/serialization.py", line 986, in load
+    with _open_file_like(f, 'rb') as opened_file:
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/torch/serialization.py", line 435, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/torch/serialization.py", line 416, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: './dataset/reddit.pt'
+/home/jianwei/Community_Search/PU_CS/data_loader.py:72: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  features = torch.tensor(data_list[1], dtype=torch.float32)
+/home/jianwei/Community_Search/PU_CS/data_loader.py:73: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  labels = torch.tensor(data_list[2])
+Traceback (most recent call last):
+  File "link_pretrain.py", line 29, in <module>
+    adj, features, labels = get_dataset(args.dataset, args.pe_dim)
+  File "/home/jianwei/Community_Search/PU_CS/data_loader.py", line 78, in get_dataset
+    graph = dgl.from_scipy(adj)
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/dgl/convert.py", line 1128, in from_scipy
+    (sparse_fmt, arrays), urange, vrange = utils.graphdata2tensors(
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/dgl/utils/data.py", line 223, in graphdata2tensors
+    raise DGLError("Unsupported graph data type:", type(data))
+dgl._ffi.base.DGLError: ('Unsupported graph data type:', <class 'torch.Tensor'>)
+/home/jianwei/Community_Search/PU_CS/data_loader.py:72: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  features = torch.tensor(data_list[1], dtype=torch.float32)
+/home/jianwei/Community_Search/PU_CS/data_loader.py:73: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  labels = torch.tensor(data_list[2])
+Traceback (most recent call last):
+  File "link_pretrain.py", line 29, in <module>
+    adj, features, labels = get_dataset(args.dataset, args.pe_dim)
+  File "/home/jianwei/Community_Search/PU_CS/data_loader.py", line 78, in get_dataset
+    graph = dgl.from_scipy(adj)
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/dgl/convert.py", line 1128, in from_scipy
+    (sparse_fmt, arrays), urange, vrange = utils.graphdata2tensors(
+  File "/home/jianwei/miniconda3/envs/python38/lib/python3.8/site-packages/dgl/utils/data.py", line 223, in graphdata2tensors
+    raise DGLError("Unsupported graph data type:", type(data))
+dgl._ffi.base.DGLError: ('Unsupported graph data type:', <class 'torch.Tensor'>)
+/home/jianwei/Community_Search/PU_CS/data_loader.py:72: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  features = torch.tensor(data_list[1], dtype=torch.float32)
+/home/jianwei/Community_Search/PU_CS/data_loader.py:73: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  labels = torch.tensor(data_list[2])
+torch.Size([232965, 602])
+<class 'torch.Tensor'> <class 'torch.Tensor'> <class 'torch.Tensor'>
+tensor(indices=tensor([[     0,      0,      0,  ..., 232964, 232964, 232964],
+                       [   242,    249,    524,  ..., 231806, 232594, 232634]]),
+       values=tensor([1, 1, 1,  ..., 1, 1, 1]),
+       size=(232965, 232965), nnz=114615892, layout=torch.sparse_coo) tensor([[ 1,  9,  0,  ...,  0,  0,  0],
+        [ 0,  0,  0,  ...,  0,  0,  0],
+        [ 0,  0,  0,  ...,  0,  0,  0],
+        ...,
+        [ 0,  0,  0,  ...,  1, -1,  0],
+        [ 0,  0,  0,  ...,  0,  0, -2],
+        [ 0,  0,  0,  ...,  0,  0,  0]]) tensor(46)
+cpu cpu cpu
+feature process time: 1020.8863s
+PretrainModel(
+  (Linear1): Linear(in_features=602, out_features=512, bias=True)
+  (encoder): TransformerBlock(
+    (att_embeddings_nope): Linear(in_features=602, out_features=512, bias=True)
+    (layers): ModuleList(
+      (0): EncoderLayer(
+        (self_attention_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (self_attention): MultiHeadAttention(
+          (linear_q): Linear(in_features=512, out_features=512, bias=True)
+          (linear_k): Linear(in_features=512, out_features=512, bias=True)
+          (linear_v): Linear(in_features=512, out_features=512, bias=True)
+          (att_dropout): Dropout(p=0.1, inplace=False)
+          (output_layer): Linear(in_features=512, out_features=512, bias=True)
+        )
+        (self_attention_dropout): Dropout(p=0.1, inplace=False)
+        (ffn_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (layer1): Linear(in_features=512, out_features=1024, bias=True)
+          (gelu): GELU(approximate='none')
+          (layer2): Linear(in_features=1024, out_features=512, bias=True)
+        )
+        (ffn_dropout): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (final_ln): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+    (out_proj): Linear(in_features=512, out_features=256, bias=True)
+    (attn_layer): Linear(in_features=1024, out_features=1, bias=True)
+  )
+  (marginloss): MarginRankingLoss()
+)
+link_pretrain.py:43: DeprecationWarning: Calling np.sum(generator) is deprecated, and in the future will give a different result. Use np.sum(np.fromiter(generator)) or the python sum builtin instead.
+  print('total params:', sum(p.numel() for p in model.parameters()))
+total params: 2853634
+starting transformer to coo
+start mini batch processing
+start mini batch: adj of each chunks
+start mini batch: minus adj of each chunks
+start mini batch: back to torch coo adj
+/home/jianwei/Community_Search/PU_CS/utils.py:211: UserWarning: torch.sparse.SparseTensor(indices, values, shape, *, device=) is deprecated.  Please use torch.sparse_coo_tensor(indices, values, shape, dtype=, device=). (Triggered internally at /opt/conda/conda-bld/pytorch_1695392036766/work/torch/csrc/utils/tensor_new.cpp:605.)
+  adj = torch.sparse.LongTensor(torch.LongTensor([adj.row.tolist(), adj.col.tolist()]),
+start mini batch: back to torch coo minus adj
+4000 4000
+adj process time: 184.0475s
+starting training...
+Epoch: 0001 loss_train: 475.4643
+Epoch: 0002 loss_train: 87.0242
+Epoch: 0003 loss_train: -532.6131
+Epoch: 0004 loss_train: -857.3391
+Epoch: 0005 loss_train: -958.3207
+Epoch: 0006 loss_train: -606.5430
+Epoch: 0007 loss_train: -1263.1476
+Optimization Finished!
+Train time: 64.4763s
+Start Save Model...
+nohup: ignoring input
+/home/jianwei/Community_Search/PU_CS/data_loader.py:72: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  features = torch.tensor(data_list[1], dtype=torch.float32)
+/home/jianwei/Community_Search/PU_CS/data_loader.py:73: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  labels = torch.tensor(data_list[2])
+torch.Size([232965, 602])
+<class 'torch.Tensor'> <class 'torch.Tensor'>
+tensor(indices=tensor([[     0,      0,      0,  ..., 232964, 232964, 232964],
+                       [   242,    249,    524,  ..., 231806, 232594, 232634]]),
+       values=tensor([1, 1, 1,  ..., 1, 1, 1]),
+       size=(232965, 232965), nnz=114615892, layout=torch.sparse_coo) tensor([[ 1,  9,  0,  ...,  0,  0,  0],
+        [ 0,  0,  0,  ...,  0,  0,  0],
+        [ 0,  0,  0,  ...,  0,  0,  0],
+        ...,
+        [ 0,  0,  0,  ...,  1, -1,  0],
+        [ 0,  0,  0,  ...,  0,  0, -2],
+        [ 0,  0,  0,  ...,  0,  0,  0]])
+cpu cpu
+nohup: ignoring input
+/home/jianwei/Community_Search/PU_CS/data_loader.py:72: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  features = torch.tensor(data_list[1], dtype=torch.float32)
+/home/jianwei/Community_Search/PU_CS/data_loader.py:73: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  labels = torch.tensor(data_list[2])
+torch.Size([232965, 602])
+<class 'torch.Tensor'> <class 'torch.Tensor'>
+tensor(indices=tensor([[     0,      0,      0,  ..., 232964, 232964, 232964],
+                       [   242,    249,    524,  ..., 231806, 232594, 232634]]),
+       values=tensor([1, 1, 1,  ..., 1, 1, 1]),
+       size=(232965, 232965), nnz=114615892, layout=torch.sparse_coo) tensor([[ 1,  9,  0,  ...,  0,  0,  0],
+        [ 0,  0,  0,  ...,  0,  0,  0],
+        [ 0,  0,  0,  ...,  0,  0,  0],
+        ...,
+        [ 0,  0,  0,  ...,  1, -1,  0],
+        [ 0,  0,  0,  ...,  0,  0, -2],
+        [ 0,  0,  0,  ...,  0,  0,  0]])
+cpu cpu
+feature process time: 1021.7390s
+PretrainModel(
+  (Linear1): Linear(in_features=602, out_features=512, bias=True)
+  (encoder): TransformerBlock(
+    (att_embeddings_nope): Linear(in_features=602, out_features=512, bias=True)
+    (layers): ModuleList(
+      (0): EncoderLayer(
+        (self_attention_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (self_attention): MultiHeadAttention(
+          (linear_q): Linear(in_features=512, out_features=512, bias=True)
+          (linear_k): Linear(in_features=512, out_features=512, bias=True)
+          (linear_v): Linear(in_features=512, out_features=512, bias=True)
+          (att_dropout): Dropout(p=0.1, inplace=False)
+          (output_layer): Linear(in_features=512, out_features=512, bias=True)
+        )
+        (self_attention_dropout): Dropout(p=0.1, inplace=False)
+        (ffn_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (layer1): Linear(in_features=512, out_features=1024, bias=True)
+          (gelu): GELU(approximate='none')
+          (layer2): Linear(in_features=1024, out_features=512, bias=True)
+        )
+        (ffn_dropout): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (final_ln): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+    (out_proj): Linear(in_features=512, out_features=256, bias=True)
+    (attn_layer): Linear(in_features=1024, out_features=1, bias=True)
+  )
+  (marginloss): MarginRankingLoss()
+)
+link_pretrain.py:43: DeprecationWarning: Calling np.sum(generator) is deprecated, and in the future will give a different result. Use np.sum(np.fromiter(generator)) or the python sum builtin instead.
+  print('total params:', sum(p.numel() for p in model.parameters()))
+total params: 2853634
+starting transformer to coo
+start mini batch processing
+start mini batch: adj of each chunks
+start mini batch: minus adj of each chunks
+start mini batch: back to torch coo adj
+/home/jianwei/Community_Search/PU_CS/utils.py:211: UserWarning: torch.sparse.SparseTensor(indices, values, shape, *, device=) is deprecated.  Please use torch.sparse_coo_tensor(indices, values, shape, dtype=, device=). (Triggered internally at /opt/conda/conda-bld/pytorch_1695392036766/work/torch/csrc/utils/tensor_new.cpp:605.)
+  adj = torch.sparse.LongTensor(torch.LongTensor([adj.row.tolist(), adj.col.tolist()]),
+start mini batch: back to torch coo minus adj
+4000 4000
+adj process time: 181.0985s
+starting training...
+Epoch: 0001 loss_train: 0.2169
+Epoch: 0002 loss_train: 0.1104
+Epoch: 0003 loss_train: 0.0693
+Epoch: 0004 loss_train: 0.0668
+Epoch: 0005 loss_train: 0.0585
+Epoch: 0006 loss_train: 0.0460
+Epoch: 0007 loss_train: 0.0613
+Epoch: 0008 loss_train: 0.0360
+Epoch: 0009 loss_train: 0.0335
+Epoch: 0010 loss_train: 0.0346
+Epoch: 0011 loss_train: 0.0301
+Epoch: 0012 loss_train: 0.0310
+Optimization Finished!
+Train time: 96.8487s
+Start Save Model...
+/home/jianwei/Community_Search/PU_CS/data_loader.py:72: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  features = torch.tensor(data_list[1], dtype=torch.float32)
+/home/jianwei/Community_Search/PU_CS/data_loader.py:73: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  labels = torch.tensor(data_list[2])
+torch.Size([232965, 602])
+<class 'torch.Tensor'> <class 'torch.Tensor'>
+torch.Size([232965, 232965]) torch.Size([232965, 602])
+cpu cpu

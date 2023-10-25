@@ -16,7 +16,7 @@ selected_queries = []
 ground_truth = []
 
 for i in range(150):
-    num_node = torch.randint(1, 4, (1,)).item()
+    num_node = torch.randint(1, 2, (1,)).item()
     selected_class = torch.randint(0, num_class, (1,)).item()
     print(num_node)
     selected_nodes = []

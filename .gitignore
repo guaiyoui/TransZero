@@ -4,3 +4,7 @@
 /model/
 /dataset/
 /pretrain_result/
+/data/
+/other_models/
+/logs/
+test.py

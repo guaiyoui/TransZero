@@ -1,0 +1,2 @@
+python link_pretrain.py --dataset cs --model_name cs --batch_size 18333 --epochs 100 --dropout 0.1 --hidden_dim 512 --hops 3  --n_heads 8 --n_layers 3 --pe_dim 10 --peak_lr 0.001  --weight_decay=1e-05 --device 1
+python accuracy_globalsearch.py --dataset cs
