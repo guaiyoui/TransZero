@@ -55,7 +55,7 @@ def parse_args():
                         help='Batch size')
     parser.add_argument('--group_epoch_gap', type=int, default=20,
                         help='Batch size')
-    parser.add_argument('--epochs', type=int, default=2000,
+    parser.add_argument('--epochs', type=int, default=100,
                         help='Number of epochs to train.')
     parser.add_argument('--tot_updates',  type=int, default=1000,
                         help='used for optimizer learning rate scheduling')

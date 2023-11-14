@@ -14,6 +14,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     # main parameters
     parser.add_argument('--dataset', type=str, default='cora', help='dataset name')
+    parser.add_argument('--embedding_tensor_name', type=str, help='embedding tensor name')
     parser.add_argument('--EmbeddingPath', type=str, default='./pretrain_result/', help='embedding path')
     parser.add_argument('--topk', type=int, default=400, help='the number of nodes selected.')
 
@@ -62,12 +63,18 @@ def GlobalSearch(query_index, graph_score):
 
 if __name__ == "__main__":
     args = parse_args()
+    print(args)
+
+
+    # 设置 embedding_tensor_name 的默认值
+    if args.embedding_tensor_name is None:
+        args.embedding_tensor_name = args.dataset
     
-    embedding_tensor = torch.from_numpy(np.load(args.EmbeddingPath + args.dataset + '.npy'))
+
+    embedding_tensor = torch.from_numpy(np.load(args.EmbeddingPath + args.embedding_tensor_name + '.npy'))
     
     # load queries and labels
     query, labels = load_query_n_gt("./dataset/", args.dataset, embedding_tensor.shape[0])
-    gt_length = get_gt_legnth("./dataset/", args.dataset)
 
     start = time.time()
     query_feature = torch.mm(query, embedding_tensor) # (query_num, embedding_dim)

@@ -3,8 +3,11 @@
 /pretrain_result/
 /model/
 /dataset/
-/pretrain_result/
 /data/
 /other_models/
 /logs/
+/experiments/
 test.py
+expsim_globalsearch.py
+exp_link_pretrain.py
+exptau_globalsearch.py
