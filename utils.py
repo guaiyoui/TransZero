@@ -148,6 +148,8 @@ def conductance_hop(adj, max_khop):
                 results[i][j] = 0
             else:
                 results[i][j] = 1
+    if hop==1:
+        results==torch.ones((max_khop+1, adj.shape[0]))
     return results
 
 # def f1_score_calculation(y_pred, y_true):
