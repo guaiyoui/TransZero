@@ -8,6 +8,7 @@
 /logs/
 /experiments/
 /visiualization/
+/example_dataset/
 test.py
 expsim_globalsearch.py
 exp_link_pretrain.py
