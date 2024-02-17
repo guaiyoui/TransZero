@@ -52,8 +52,8 @@ The first one is used for download datasets automatically and the second one is 
     ├── model                       # the saved model
     ├── pretrain_result             # the pretrained latent representation
     ├── scripts                     # the scripts to run the model and the experiments
-    ├── accuracy_globalsearch.py    # the MESG solver-Global_Binary_Search
-    ├── accuracy_localsearch.py     # the MESG solver-Local_Search
+    ├── accuracy_globalsearch.py    # the IESG solver-Global_Binary_Search
+    ├── accuracy_localsearch.py     # the IESG solver-Local_Search
     ├── data_loader.py              # data loader
     ├── early_stop.py               # early stop module to alleviate overfitting
     ├── layer.py                    # the layer in the network
