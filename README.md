@@ -34,7 +34,7 @@ We provide the processed datasets of cora, citeseer and photo as space limit. Th
 1: make a new folder by "unzip dataset.zip" or "mkdir dataset"
 2: get into the dataset folder by "cd dataset"
 3: make a folder for each dataset, e.g., "mkdir texas"
-4: use the scripts in dataset_dealing to download datasets and generate the query. Note that there are two scripts for each dataset, e.g., "texas_download_pyg.py" or "texas_data.py".
+4: use the scripts in dataset_dealing to download datasets and generate the query. Note that there are two scripts for each dataset, i.e., "texas_download_pyg.py" or "texas_data.py".
 The first one is used for download datasets automatically and the second one is used to generate query automatically. Please put the first one script under the folder of "./dataset/" and put the second script under the folder of "./dataset/dataset_name/", e.g., "./dataset/texas/"
 5: python texas_download_pyg.py
 6: python texas_data.py
