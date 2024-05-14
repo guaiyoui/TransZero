@@ -1,4 +1,4 @@
-code for the paper "Efficient Unsupervised Community Search with Pre-trained Graph Transformer"
+code for the paper "Efficient Unsupervised Community Search with Pre-trained Graph Transformer" which is accepted by VLDB 2024.
 
 [![Awesome](https://awesome.re/badge.svg)](https://github.com/guaiyoui/graph-analytics-starter-pack) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -67,3 +67,14 @@ The first one is used for download datasets automatically and the second one is 
     ├── training_all.sh             # the script to train all the models
     └── README.md
 
+### Citation
+
+```
+@article{wang2024efficient,
+  title={Efficient Unsupervised Community Search with Pre-trained Graph Transformer},
+  author={Wang, Jianwei and Wang, Kai and Lin, Xuemin and Zhang, Wenjie and Zhang, Ying},
+  journal={arXiv preprint arXiv:2403.18869},
+  year={2024}
+}
+
+```
